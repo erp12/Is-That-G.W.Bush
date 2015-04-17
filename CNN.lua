@@ -2,7 +2,6 @@ require 'nn'
 require 'image'
 require 'lfs'
 
-
 -- ACTIVATION FUNCTION
 ReLU = nn.ReLU
 
@@ -35,13 +34,6 @@ model:add(nn.Linear(4096,4096)):add(nn.ReLU(true))
 model:add(nn.Linear(4096,2)):add(nn.ReLU(true))
 
 -- TRAINING THE NETWORK --
-
-dataset={};
-dataCount = 1;
-
-inputs = {};
-outputs = {};
-
 for file in lfs.dir(lfs.currentdir().."/FinalData") do
 	if (file ~= ".") and (file ~= "..") then 
 		local input = image.load("FinalData/"..file, 3);
@@ -56,29 +48,13 @@ for file in lfs.dir(lfs.currentdir().."/FinalData") do
 		else
 			error("Invalid Input Image Filename")
 		end
-		dataset[dataCount] = {input, output};
-		dataCount = dataCount + 1;
 		
 		criterion = nn.MSECriterion();
-		-- feed it to the neural network and the criterion
 		criterion:forward(model:forward(input), output);
-		-- (1) zero the accumulation of the gradients
 		model:zeroGradParameters();
-		-- (2) accumulate gradients
 		model:backward(input, criterion:backward(model.output, output));
-		-- (3) update parameters with a 0.01 learning rate
 		model:updateParameters(0.01);
 	end
 end
-
--- An alternate way to train, which I couldn't get to work.
---[[
-function dataset:size() return dataCount end
-
-criterion = nn.MSECriterion()  
-trainer = nn.StochasticGradient(model, criterion)
-trainer.learningRate = 0.01
-trainer:train(dataset)
-]]--
 
 
