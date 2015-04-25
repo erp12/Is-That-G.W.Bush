@@ -23,6 +23,7 @@ ReLU = nn.ReLU
 -- -- dW: The step of the convolution in the width dimension. Default is 1.
 -- -- dH: The step of the convolution in the height dimension. Default is 1.
 local model = nn.Sequential()
+--model:add(nn.SpatialConvolution(3, 3, 240, 240))
 model:add(nn.VolumetricConvolution(1, 96, 11, 11, 3, 4, 4, 4)):add(ReLU(true))
 model:add(nn.VolumetricMaxPooling(10, 10, 2))
 model:add(nn.VolumetricConvolution(96, 256, 5, 5, 48)):add(ReLU(true))
@@ -36,9 +37,11 @@ model:add(nn.Linear(4096,2)):add(nn.ReLU(true))
 -- TRAINING THE NETWORK --
 for file in lfs.dir(lfs.currentdir().."/FinalData") do
 	if (file ~= ".") and (file ~= "..") then 
-		local input = image.load("FinalData/"..file, 3);
+		local input = image.load("FinalData/"..file, 3); --torch.DoubleTensor
+		
 		local output= torch.Tensor(2);
 		local c = file:sub(1,1)
+		--local outpustStorage = output:stoarage()
 		if c == "A" then
 			output[1]=0;
 			output[2]=1;
@@ -48,6 +51,12 @@ for file in lfs.dir(lfs.currentdir().."/FinalData") do
 		else
 			error("Invalid Input Image Filename")
 		end
+		
+		print(torch.type(input))
+		print(input:dim())
+		print()
+		print(torch.type(output))
+		print(output:dim())
 		
 		criterion = nn.MSECriterion();
 		criterion:forward(model:forward(input), output);
