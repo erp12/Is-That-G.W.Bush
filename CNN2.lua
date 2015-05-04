@@ -19,6 +19,11 @@ model:add(nn.SpatialConvolution(192, 192, 3, 3)):add(ReLU(true))
 model:add(nn.Linear(4096,4096)):add(nn.ReLU(true))
 model:add(nn.Linear(4096,2)):add(nn.ReLU(true))
 
+conv_nodes = model:findModules('nn.SpatialConvolution')
+for i = 1, #conv_nodes do
+  print(conv_nodes[i].output:size())
+end
+
 -- TRAINING THE NETWORK --
 for file in lfs.dir(lfs.currentdir().."/FinalData") do
 	if (file ~= ".") and (file ~= "..") then 
