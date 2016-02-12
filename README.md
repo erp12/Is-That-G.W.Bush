@@ -19,3 +19,7 @@ The topology of the network is based on [this well known convolutional neural ne
 To train the network, I use the first letter in the filename of each image. If it is a "G" I expect the output [1, 0], and if its an "A" I expect the output [0, 1].
 In other words, this network is meant to classify images as "GWB" or "Not GWB".
 
+The network is created in `CNN3.lua` as is the network training.
+After the network is trained, `testingCNN3.lua` will try classifying some images.
+
+
